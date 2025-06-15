@@ -12,7 +12,7 @@ public class DB {
     private static final String DB_USER = "user";
     private static final String DB_PASSWORD = "user";
     private static final HikariDataSource dataSource;
-    private DB(){}
+
 
     static {
         HikariConfig config = new HikariConfig();
@@ -26,7 +26,7 @@ public class DB {
         dataSource = new HikariDataSource(config);
     }
 
-    public static<T> T execute(Function<DSLContext,T> f) throws SQLException {
+    public <T> T execute(Function<DSLContext,T> f) throws SQLException {
         try(var connection = dataSource.getConnection()){
             var dslContext = DSL.using(connection, SQLDialect.POSTGRES);
             return f.apply(dslContext);

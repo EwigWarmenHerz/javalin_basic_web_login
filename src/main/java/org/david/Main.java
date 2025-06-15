@@ -4,26 +4,34 @@ import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
 import io.javalin.validation.ValidationError;
 import io.javalin.validation.ValidationException;
+import org.david.boundaries.adapters.DB;
 import org.david.boundaries.rest.handlers.UserHandlers;
+import org.david.domain.repository.UserRepository;
+import org.david.miscellaneous.custom_exceptions.HttpCustomException;
 import org.david.miscellaneous.validators.UserValidators;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
 
+
+
 void main() {
+    final var db  = new DB();
+    final var userRepository = new UserRepository(db);
+    final var userHandler = new UserHandlers(userRepository);
 
     var app = Javalin.create(javalinConfig -> {
         javalinConfig.useVirtualThreads = true;
         javalinConfig.router.apiBuilder(() ->{
             path("users", () ->{
-                get("get-all", UserHandlers::getAllUsers);
-                post("login", UserHandlers::getSingleUser);
+                get("get-all", userHandler::getAllUsers);
+                post("login", userHandler::getSingleUser);
                 post("create", ctx ->{
                     UserValidators.userDtoValidator(ctx);
-                    UserHandlers.createUser(ctx);
+                    userHandler.createUser(ctx);
                 });
                 patch("update", ctx -> {
                     UserValidators.userDtoValidator(ctx);
-                    UserHandlers.updateUser(ctx);
+                    userHandler.updateUser(ctx);
                 });
             });
         });
@@ -42,8 +50,8 @@ void main() {
         ctx.status(400).json(Map.of("errors", messages));
     }).start(8081);
 
-    app.exception(RuntimeException.class, (e, ctx) -> {
-        ctx.status(400).json(Map.of("error", e.getMessage()));
+    app.exception(HttpCustomException.class, (e, ctx) -> {
+        ctx.status(e.statusCode).json(Map.of("error", e.message));
     });
 
 
