@@ -1,4 +1,4 @@
-package org.david.domain.service;
+package org.david.domain.repository;
 import module java.base;
 import org.david.boundaries.adapters.DB;
 import org.david.boundaries.adapters.UserEntity;
@@ -27,8 +27,8 @@ public class UserRepository {
     @NotNull
     public static ResponseModel<?> createUser(DSLContext dslContext, User newUser) {
         try{
-            var queryRes =  dslContext.insertInto(table("users"))
-                .columns(field("email"), field("password")) // Don't forget password!
+            var queryRes =  dslContext.insertInto(USERS)
+                .columns(EMAIL, PASSWORD)
                 .values(newUser.email(), newUser.password())
                 .execute();
             return new ResponseModel<>(queryRes, null);

@@ -6,17 +6,16 @@ import org.david.boundaries.adapters.DB;
 import org.david.boundaries.adapters.UserEntity;
 import org.david.domain.models.ResponseModel;
 import org.david.domain.models.UserModels;
-import org.david.domain.service.UserRepository;
+import org.david.domain.repository.UserRepository;
 import org.david.miscellaneous.CustomExceptions.*;
 import org.david.miscellaneous.criptography.CryptManager;
 
-import java.io.IO;
 import java.sql.SQLException;
 
 import java.util.Map;
 
 public class UserHandlers {
-    private static ObjectMapper json = new ObjectMapper();
+    private static final ObjectMapper json = new ObjectMapper();
 
     public static void getAllUsers(Context ctx) throws SQLException {
         var users = UserRepository.getUsers()
@@ -44,15 +43,13 @@ public class UserHandlers {
         var newUserHP = newUser.withHashedPassword();
         var res = DB.execute(dslContext -> UserRepository.createUser(dslContext, newUserHP));
         if(res.errors() != null){
-            ctx.status(500).json(res.errors());
+            ctx.status(400).json(res.errors());
         }
         ctx.status(201).json(Map.of("Message", "User created successfully"));
-
     }
 
     public static void updateUser(Context ctx) throws JsonProcessingException, SQLException {
         var userDomain = json.readValue(ctx.body(),UserModels.User.class);
-        IO.println("8888");
         var user = findSingleUser(userDomain.email());
         user.email = userDomain.email();
         user.password = userDomain.password();
@@ -75,6 +72,5 @@ public class UserHandlers {
         return UserRepository.getSingleUser(email)
             .orElseThrow(() -> new ElementDoNotExistException("The user does not exist"));
     }
-
 
 }
