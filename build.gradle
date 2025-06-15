@@ -23,6 +23,8 @@ tasks.withType(JavaExec).configureEach {
 
 dependencies {
     implementation 'org.jooq:jooq:3.20.4'
+    // https://mvnrepository.com/artifact/io.javalin.community.openapi/javalin-openapi-plugin
+    implementation 'io.javalin.community.openapi:javalin-openapi-plugin:6.6.0'
 
     implementation 'com.zaxxer:HikariCP:6.3.0'// https://mvnrepository.com/artifact/com.google.crypto.tink/tink
     implementation 'com.google.crypto.tink:tink:1.17.0'

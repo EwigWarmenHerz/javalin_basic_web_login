@@ -3,6 +3,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
+import io.javalin.openapi.OpenApi;
+import io.javalin.openapi.plugin.OpenApiPlugin;
 import io.javalin.validation.ValidationError;
 import io.javalin.validation.ValidationException;
 import org.david.boundaries.adapters.DB;
@@ -19,6 +21,8 @@ void main() {
     final var db  = new DB();
     final var userRepository = new UserRepository(db);
     final var userHandler = new UserHandlers(userRepository);
+
+
 
     var app = Javalin.create(javalinConfig -> {
         javalinConfig.useVirtualThreads = true;
