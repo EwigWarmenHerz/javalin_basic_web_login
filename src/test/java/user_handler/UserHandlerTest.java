@@ -38,7 +38,7 @@ public class UserHandlerTest {
         when(userRepository.createUser(any())).thenReturn(1);
         when(ctx.status(201)).thenReturn(ctx);
 
-        ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
+        var captor = ArgumentCaptor.forClass(Map.class);
         when(ctx.json(captor.capture())).thenReturn(ctx);
 
         userHandlers.createUser(ctx);
@@ -67,7 +67,7 @@ public class UserHandlerTest {
 
         when(userRepository.getUsers()).thenReturn(List.of(userEntity));
 
-        ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
+        var captor = ArgumentCaptor.forClass(Map.class);
         when(ctx.json(captor.capture())).thenReturn(ctx);
         when(ctx.status(200)).thenReturn(ctx);
 
@@ -85,7 +85,7 @@ public class UserHandlerTest {
         when(ctx.body()).thenReturn(objectMapper.writeValueAsString(user));
         when(userRepository.getSingleUser("valid@example.com")).thenReturn(Optional.of(userEntity));
 
-        ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
+        var captor = ArgumentCaptor.forClass(Map.class);
         when(ctx.json(captor.capture())).thenReturn(ctx);
 
         userHandlers.getSingleUser(ctx);
@@ -116,7 +116,7 @@ public class UserHandlerTest {
         when(userRepository.getSingleUser("update@example.com")).thenReturn(Optional.of(userEntity));
         when(userRepository.updateUser(userEntity)).thenReturn(Optional.of(userEntity));
 
-        ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
+        var captor = ArgumentCaptor.forClass(Map.class);
         when(ctx.json(captor.capture())).thenReturn(ctx);
 
         userHandlers.updateUser(ctx);
