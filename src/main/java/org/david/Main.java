@@ -1,4 +1,5 @@
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
@@ -50,10 +51,12 @@ void main() {
         ctx.status(400).json(Map.of("errors", messages));
     }).start(8081);
 
-    app.exception(HttpCustomException.class, (e, ctx) -> {
-        ctx.status(e.statusCode).json(Map.of("error", e.message));
+    app.exception(JsonParseException.class, (e, ctx) -> {
+        ctx.status(400).json(Map.of("error", e.getMessage()));
     });
 
+    app.exception(HttpCustomException.class, (e, ctx) ->
+        ctx.json(e.statusCode).json(Map.of("error", e.message)));
 
 
 }
