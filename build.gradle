@@ -33,8 +33,6 @@ dependencies {
     implementation 'io.javalin.community.routing:routing-dsl:6.6.0'
     implementation("org.slf4j:slf4j-simple:2.0.16")
 
-
-
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
     testImplementation 'org.mockito:mockito-core:5.18.0'
