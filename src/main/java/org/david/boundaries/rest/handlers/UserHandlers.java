@@ -40,7 +40,7 @@ public class UserHandlers {
         throw new InvalidPasswordException("The passwords do not match");
 
     }
-    public void createUser(Context ctx) throws JsonProcessingException, SQLException {
+    public void createUser(Context ctx) throws JsonProcessingException {
         var body = ctx.body();
         var newUser = json.readValue(body, UserModels.User.class);
         var newUserHP = newUser.withHashedPassword();
@@ -53,7 +53,9 @@ public class UserHandlers {
     }
 
     public void updateUser(Context ctx) throws JsonProcessingException, SQLException {
-        var userDomain = json.readValue(ctx.body(),UserModels.User.class);
+        var userDomain = json
+            .readValue(ctx.body(),UserModels.User.class)
+            .withHashedPassword();
         var user = findSingleUser(userDomain.email());
         user.email = userDomain.email();
         user.password = userDomain.password();

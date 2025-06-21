@@ -41,7 +41,15 @@ public interface CustomExceptions {
             if(message == null || message.isBlank()){
                 message = "";
             }
-            super(message, 500);
+            super(message, 40);
+        }
+    }
+    class GenericSQLException extends HttpCustomException{
+        public GenericSQLException(String message){
+            if(message == null || message.isBlank()){
+                message = "";
+            }
+            super(message, 400);
         }
     }
 }

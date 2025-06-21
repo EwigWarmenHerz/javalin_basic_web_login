@@ -3,8 +3,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
-import io.javalin.openapi.OpenApi;
-import io.javalin.openapi.plugin.OpenApiPlugin;
 import io.javalin.validation.ValidationError;
 import io.javalin.validation.ValidationException;
 import org.david.boundaries.adapters.DB;
@@ -18,7 +16,7 @@ import static io.javalin.apibuilder.ApiBuilder.*;
 
 
 void main() {
-    final var db  = new DB();
+    final var db  = DB.instance;
     final var userRepository = new UserRepository(db);
     final var userHandler = new UserHandlers(userRepository);
 
@@ -26,10 +24,13 @@ void main() {
 
     var app = Javalin.create(javalinConfig -> {
         javalinConfig.useVirtualThreads = true;
-        javalinConfig.router.apiBuilder(() ->{
+        javalinConfig.router.apiBuilder(() ->
             path("users", () ->{
                 get("get-all", userHandler::getAllUsers);
-                post("login", userHandler::getSingleUser);
+                post("login", ctx -> {
+                    UserValidators.userDtoValidator(ctx);
+                    userHandler.getSingleUser(ctx);
+                });
                 post("create", ctx ->{
                     UserValidators.userDtoValidator(ctx);
                     userHandler.createUser(ctx);
@@ -38,8 +39,7 @@ void main() {
                     UserValidators.userDtoValidator(ctx);
                     userHandler.updateUser(ctx);
                 });
-            });
-        });
+        }));
         javalinConfig.jsonMapper(new JavalinJackson().updateMapper(mapper -> {
             mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -55,12 +55,10 @@ void main() {
         ctx.status(400).json(Map.of("errors", messages));
     }).start(8081);
 
-    app.exception(JsonParseException.class, (e, ctx) -> {
-        ctx.status(400).json(Map.of("error", e.getMessage()));
-    });
+    app.exception(JsonParseException.class, (e, ctx) -> ctx.status(400).json(Map.of("error", e.getMessage())));
 
     app.exception(HttpCustomException.class, (e, ctx) ->
-        ctx.json(e.statusCode).json(Map.of("error", e.message)));
+        ctx.status(e.statusCode).json(Map.of("error", e.message)));
 
 
 }

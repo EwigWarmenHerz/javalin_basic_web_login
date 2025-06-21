@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'org.david'
@@ -7,6 +8,13 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+}
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'Main' // Replace with your real main class
+        )
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -23,10 +31,10 @@ tasks.withType(JavaExec).configureEach {
 
 dependencies {
     implementation 'org.jooq:jooq:3.20.4'
-    // https://mvnrepository.com/artifact/io.javalin.community.openapi/javalin-openapi-plugin
     implementation 'io.javalin.community.openapi:javalin-openapi-plugin:6.6.0'
 
-    implementation 'com.zaxxer:HikariCP:6.3.0'// https://mvnrepository.com/artifact/com.google.crypto.tink/tink
+    runtimeOnly 'io.agroal:agroal-pool:2.7.1'
+    implementation 'io.agroal:agroal-api:2.7.1'
     implementation 'com.google.crypto.tink:tink:1.17.0'
     runtimeOnly 'org.postgresql:postgresql:42.7.3'
     implementation 'io.javalin:javalin-bundle:6.6.0'
@@ -43,6 +51,11 @@ dependencies {
 
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(24)
+    }
+}
 test {
     useJUnitPlatform()
 }

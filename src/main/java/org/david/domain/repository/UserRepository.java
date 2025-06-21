@@ -37,13 +37,12 @@ public class UserRepository {
                 .execute());
             return res;
         } catch (SQLException e) {
-
             throw new CustomExceptions.FailedToCreateUserException(e.getMessage());
         }
     }
 
     @NotNull
-    public  Optional<UserEntity> updateUser(UserEntity user) throws SQLException {
+    public  Optional<UserEntity> updateUser(UserEntity user){
         try {
             var res = db.execute(dslContext -> dslContext
                 .update(USERS)
@@ -57,7 +56,7 @@ public class UserRepository {
         }
     }
     @NotNull
-    public  List<UserEntity> getUsers() throws SQLException {
+    public  List<UserEntity> getUsers(){
        try{
            return db.execute(dslContext -> dslContext
                .selectFrom(USERS)
@@ -66,7 +65,7 @@ public class UserRepository {
            throw new RuntimeException(e.getMessage());
        }
     }
-    public  Optional<UserEntity> getSingleUser(String email) throws SQLException {
+    public  Optional<UserEntity> getSingleUser(String email){
        try {
            return db.execute(dslContext ->
                dslContext.selectFrom(USERS)
